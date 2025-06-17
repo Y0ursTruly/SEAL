@@ -29,7 +29,6 @@ steps:
     targetType: 'inline'
     script: |
       # Directories
-      $AndroidFilesDirectory = Join-Path -Path $Env:BUILD_SOURCESDIRECTORY -ChildPath android/app/.cxx
       $TargetDirectoryArm64 = Join-Path -Path $Env:BUILD_ARTIFACTSTAGINGDIRECTORY -ChildPath lib/arm64-v8a
       $TargetDirectoryX64 = Join-Path -Path $Env:BUILD_ARTIFACTSTAGINGDIRECTORY -ChildPath lib/x86_64
 
@@ -37,8 +36,15 @@ steps:
       mkdir -ErrorAction Ignore $TargetDirectoryArm64
       mkdir -ErrorAction Ignore $TargetDirectoryX64
 
-      Get-ChildItem -Path $AndroidFilesDirectory -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\arm64-v8a\\lib\\arm64-v8a\\libsealc.so'} | Copy-Item -Destination $TargetDirectoryArm64
-      Get-ChildItem -Path $AndroidFilesDirectory -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\x86_64\\lib\\x86_64\\libsealc.so'} | Copy-Item -Destination $TargetDirectoryX64
+      # Show files to be copied
+      Write-Host "Files to be copied:"
+      Get-ChildItem -Path $Env::BUILD_SOURCESDIRECTORY -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\arm64-v8a\\lib\\arm64-v8a\\libsealc.so'}
+      Get-ChildItem -Path $Env::BUILD_SOURCESDIRECTORY -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\x86_64\\lib\\x86_64\\libsealc.so'}
+
+      # Copy files to target directories
+      Write-Host "Copying files to $TargetDirectoryArm64 and $TargetDirectoryX64"
+      Get-ChildItem -Path $Env::BUILD_SOURCESDIRECTORY -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\arm64-v8a\\lib\\arm64-v8a\\libsealc.so'} | Copy-Item -Destination $TargetDirectoryArm64
+      Get-ChildItem -Path $Env::BUILD_SOURCESDIRECTORY -Recurse | Where {$_.Fullname -match 'RelWithDebInfo\\.*\\x86_64\\lib\\x86_64\\libsealc.so'} | Copy-Item -Destination $TargetDirectoryX64
 
 - task: PublishBuildArtifacts@1
   displayName: Publish build artifacts
