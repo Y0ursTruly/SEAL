@@ -22,11 +22,7 @@
 
 // Are intrinsics enabled?
 #ifdef SEAL_USE_INTRIN
-#if defined(__aarch64__) || defined(__arm64__)
-#include <arm_neon.h>
-#elif defined(EMSCRIPTEN)
-#include <wasm_simd128.h>
-#else
+#if defined(SEAL_INTRIN_HEADER_FOUND) && defined(__x86_64__)
 #include <x86intrin.h>
 #endif
 
@@ -72,7 +68,7 @@ __extension__ typedef unsigned __int128 uint128_t;
 
 #ifdef SEAL_USE__ADDCARRY_U64
 #define SEAL_ADD_CARRY_UINT64(operand1, operand2, carry, result) _addcarry_u64(carry, operand1, operand2, result)
-#elif SEAL_USE___BUILTIN_ADDCLL
+#elif defined(SEAL_USE___BUILTIN_ADDCLL)
 #define SEAL_ADD_CARRY_UINT64(operand1, operand2, carry, result)           \
     ({                                                                     \
         unsigned long long carry_out = 0;                                  \
@@ -83,7 +79,7 @@ __extension__ typedef unsigned __int128 uint128_t;
 
 #ifdef SEAL_USE__SUBBORROW_U64
 #define SEAL_SUB_BORROW_UINT64(operand1, operand2, borrow, result) _subborrow_u64(borrow, operand1, operand2, result)
-#elif SEAL_USE___BUILTIN_SUBCLL
+#elif defined(SEAL_USE___BUILTIN_SUBCLL)
 #define SEAL_SUB_BORROW_UINT64(operand1, operand2, borrow, result)           \
     ({                                                                       \
         unsigned long long borrow_out = 0;                                   \

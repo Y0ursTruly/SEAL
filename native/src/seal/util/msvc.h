@@ -57,17 +57,33 @@
 #define SEAL_FREE(ptr) _aligned_free(ptr)
 #endif
 
-// X64
-#ifdef _M_X64
-
 #ifdef SEAL_USE_INTRIN
+#ifdef SEAL_INTRIN_HEADER_FOUND
 #include <intrin.h>
+#endif
 
 #ifdef SEAL_USE__UMUL128
 #pragma intrinsic(_umul128)
-#define SEAL_MULTIPLY_UINT64_HW64(operand1, operand2, hw64) _umul128(operand1, operand2, hw64);
-
 #define SEAL_MULTIPLY_UINT64(operand1, operand2, result128) result128[0] = _umul128(operand1, operand2, result128 + 1);
+
+// For now, use _umul128 also for SEAL_MULTIPLY_UINT64_HW
+#define SEAL_MULTIPLY_UINT64_HW64(operand1, operand2, hw64) _umul128(operand1, operand2, hw64);
+#endif
+
+#ifdef SEAL_USE___UMULH
+#pragma intrinsic(__umulh)
+#undef SEAL_MULTIPLY_UINT64_HW64
+#define SEAL_MULTIPLY_UINT64_HW64(operand1, operand2, hw64) *hw64 = __umulh(operand1, operand2);
+
+// If _umul128 is not available, then build it instead from __umulh
+#ifndef SEAL_USE__UMUL128
+#define SEAL_MULTIPLY_UINT64(operand1, operand2, result128) \
+    do                                                      \
+    {                                                       \
+        result128[0] = __umulh(operand1, operand2);         \
+        result128[1] = operand1 * operand2;                 \
+    } while (false)
+#endif
 #endif
 
 #ifdef SEAL_USE__BITSCANREVERSE64
@@ -86,10 +102,6 @@
 #endif
 
 #endif
-#else
-#undef SEAL_USE_INTRIN
-
-#endif //_M_X64
 
 // Force inline
 #define SEAL_FORCE_INLINE __forceinline

@@ -7,28 +7,20 @@ if(SEAL_USE_INTRIN)
     set(CMAKE_REQUIRED_QUIET ON)
 
     if(MSVC)
+        # For MSVC, all the intrinsics we need are in intrin.h.
         set(SEAL_INTRIN_HEADER "intrin.h")
     else()
-        if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
-            set(SEAL_ARM64 ON)
-        else()
-            set(SEAL_ARM64 OFF)
-        endif()
-        if(SEAL_ARM64)
-            set(SEAL_INTRIN_HEADER "arm_neon.h")
-        elseif(EMSCRIPTEN)
-            set(SEAL_INTRIN_HEADER "wasm_simd128.h")
-        else()
-            set(SEAL_INTRIN_HEADER "x86intrin.h")
-        endif()
+        # A few intrinsics are Intel-only; we expect these to be in x86intrin.h.
+        set(SEAL_INTRIN_HEADER "x86intrin.h")
     endif()
 
+    # Check if the intrinsics header file exists. Otherwise, unset the variable.
     check_include_file_cxx(${SEAL_INTRIN_HEADER} SEAL_INTRIN_HEADER_FOUND)
     set(CMAKE_REQUIRED_QUIET ${CMAKE_REQUIRED_QUIET_OLD})
 
     if(SEAL_INTRIN_HEADER_FOUND)
         message(STATUS "${SEAL_INTRIN_HEADER} - found")
     else()
-        message(STATUS "${SEAL_INTRIN_HEADER} - not found")
+        unset(SEAL_INTRIN_HEADER)
     endif()
 endif()

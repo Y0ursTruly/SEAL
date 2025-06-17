@@ -27,13 +27,17 @@
 #cmakedefine SEAL_AVOID_BRANCHING
 
 // Intrinsics
+#cmakedefine SEAL_INTRIN_HEADER_FOUND
 #cmakedefine SEAL_USE_INTRIN
 #cmakedefine SEAL_USE__UMUL128
+#cmakedefine SEAL_USE___UMULH
+#cmakedefine SEAL_USE___INT128
 #cmakedefine SEAL_USE__BITSCANREVERSE64
 #cmakedefine SEAL_USE___BUILTIN_CLZLL
-#cmakedefine SEAL_USE___INT128
 #cmakedefine SEAL_USE__ADDCARRY_U64
 #cmakedefine SEAL_USE__SUBBORROW_U64
+#cmakedefine SEAL_USE___BUILTIN_ADDCLL
+#cmakedefine SEAL_USE___BUILTIN_SUBCLL
 
 // Zero memory functions
 #cmakedefine SEAL_USE_EXPLICIT_BZERO

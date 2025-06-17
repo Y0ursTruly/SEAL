@@ -1,6 +1,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
 
+macro(seal_make_memfn_option id docstring)
+    set(_SEAL_USE_FN_NAME "SEAL_USE_${id}")
+    set(_SEAL_FOUND_FN_NAME "SEAL_${id}_FOUND")
+
+    option(${_SEAL_USE_FN_NAME} "${docstring}" ON)
+    mark_as_advanced(FORCE ${_SEAL_USE_FN_NAME})
+
+    # Disable if the presence test failed
+    if(NOT (DEFINED ${_SEAL_FOUND_FN_NAME} AND ${_SEAL_FOUND_FN_NAME}))
+        set(${_SEAL_USE_FN_NAME} OFF CACHE BOOL "${docstring}" FORCE)
+    endif()
+
+    unset(_SEAL_USE_FN_NAME)
+    unset(_SEAL_FOUND_FN_NAME)
+endmacro()
+
 # Check for memset_s
 check_cxx_source_runs("
     #define __STDC_WANT_LIB_EXT1__ 1
@@ -12,9 +28,15 @@ check_cxx_source_runs("
         return r;
     }"
     SEAL_MEMSET_S_FOUND)
+seal_make_memfn_option(MEMSET_S "Use memset_s")
+message(STATUS "SEAL_USE_MEMSET_S: ${SEAL_USE_MEMSET_S}")
 
 # Check for explicit_bzero
 check_symbol_exists(explicit_bzero "string.h" SEAL_EXPLICIT_BZERO_FOUND)
+seal_make_memfn_option(EXPLICIT_BZERO "Use explicit_bzero")
+message(STATUS "SEAL_USE_EXPLICIT_BZERO: ${SEAL_USE_EXPLICIT_BZERO}")
 
 # Check for explicit_memset
 check_symbol_exists(explicit_memset "string.h" SEAL_EXPLICIT_MEMSET_FOUND)
+seal_make_memfn_option(EXPLICIT_MEMSET "Use explicit_memset")
+message(STATUS "SEAL_USE_EXPLICIT_MEMSET: ${SEAL_USE_EXPLICIT_MEMSET}")

@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
+// STD
+#include <utility>
+
 // SEALNet
 #include "seal/c/memorypoolhandle.h"
 #include "seal/c/utilities.h"
@@ -57,7 +60,7 @@ SEAL_C_FUNC MemoryPoolHandle_Global(void **handle)
     IfNullRet(handle, E_POINTER);
 
     MemoryPoolHandle global = MemoryPoolHandle::Global();
-    MemoryPoolHandle *handleptr = new MemoryPoolHandle(move(global));
+    MemoryPoolHandle *handleptr = new MemoryPoolHandle(std::move(global));
     *handle = handleptr;
     return S_OK;
 }
@@ -67,7 +70,7 @@ SEAL_C_FUNC MemoryPoolHandle_ThreadLocal(void **handle)
     IfNullRet(handle, E_POINTER);
 
     MemoryPoolHandle threadlocal = MemoryPoolHandle::ThreadLocal();
-    MemoryPoolHandle *handleptr = new MemoryPoolHandle(move(threadlocal));
+    MemoryPoolHandle *handleptr = new MemoryPoolHandle(std::move(threadlocal));
     *handle = handleptr;
     return S_OK;
 }
@@ -77,7 +80,7 @@ SEAL_C_FUNC MemoryPoolHandle_New(bool clear_on_destruction, void **handle)
     IfNullRet(handle, E_POINTER);
 
     MemoryPoolHandle newhandle = MemoryPoolHandle::New(clear_on_destruction);
-    MemoryPoolHandle *handleptr = new MemoryPoolHandle(move(newhandle));
+    MemoryPoolHandle *handleptr = new MemoryPoolHandle(std::move(newhandle));
     *handle = handleptr;
     return S_OK;
 }

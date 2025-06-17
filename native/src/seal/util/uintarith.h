@@ -36,7 +36,7 @@ namespace seal
         SEAL_NODISCARD inline unsigned char add_uint64(
             T operand1, S operand2, unsigned char carry, unsigned long long *result)
         {
-            return SEAL_ADD_CARRY_UINT64(operand1, operand2, carry, result);
+            return static_cast<unsigned char>(SEAL_ADD_CARRY_UINT64(operand1, operand2, carry, result));
         }
 
         template <typename T, typename S, typename R, typename = std::enable_if_t<is_uint64_v<T, S, R>>>
@@ -193,7 +193,7 @@ namespace seal
         SEAL_NODISCARD inline unsigned char sub_uint64(
             T operand1, S operand2, unsigned char borrow, unsigned long long *result)
         {
-            return SEAL_SUB_BORROW_UINT64(operand1, operand2, borrow, result);
+            return static_cast<unsigned char>(SEAL_SUB_BORROW_UINT64(operand1, operand2, borrow, result));
         }
 
         template <typename T, typename S, typename R, typename = std::enable_if_t<is_uint64_v<T, S, R>>>
