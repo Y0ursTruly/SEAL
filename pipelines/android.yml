@@ -40,7 +40,7 @@ steps:
 #       Expand-Archive -Path $NinjaZipFile -DestinationPath $ToolsDirectory
 #       Copy-Item -Path $NinjaExeFile -Destination "c:/Program Files/CMake/bin"
 
-- task: Gradle@2
+- task: Gradle@4
   displayName: Compile Android Native Libraries
   inputs:
     workingDirectory: '$(Build.SourcesDirectory)/android'
