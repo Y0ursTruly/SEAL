@@ -2,9 +2,9 @@
 # Licensed under the MIT license.
 
 # This cache-initialization file will be used to enable functions when cross-compiling
-# for iOS, as check_cxx_source_runs fails for cross-compilers.
+# for Android, as check_cxx_source_runs fails for cross-compilers.
 
-set(SEAL_MEMSET_S_FOUND_COMPILED "TRUE" CACHE INTERNAL "Result of TRY_COMPILE" FORCE)
+set(SEAL_MEMSET_S_FOUND_COMPILED "FALSE" CACHE INTERNAL "Result of TRY_COMPILE" FORCE)
 set(SEAL_MEMSET_S_FOUND "0" CACHE INTERNAL "Result of TRY_RUN" FORCE)
 
 set(SEAL_EXPLICIT_BZERO_FOUND_COMPILED "FALSE" CACHE INTERNAL "Result of TRY_COMPILE" FORCE)
