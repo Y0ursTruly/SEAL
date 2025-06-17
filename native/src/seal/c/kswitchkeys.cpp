@@ -140,7 +140,7 @@ SEAL_C_FUNC KSwitchKeys_AddKeyList(void *thisptr, uint64_t count, void **key_lis
         PublicKey new_pkey(ph::Create(keys->pool()));
         new_pkey = *pkey;
 
-        keys->data().back().emplace_back(move(new_pkey));
+        keys->data().back().emplace_back(std::move(new_pkey));
     }
 
     return S_OK;

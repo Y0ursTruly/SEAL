@@ -76,7 +76,7 @@ SEAL_C_FUNC MemoryManager_GetPool1(int prof_opt, bool clear_on_destruction, void
         handle = MemoryManager::GetPool(profile_opt);
     }
 
-    MemoryPoolHandle *handle_ptr = new MemoryPoolHandle(move(handle));
+    MemoryPoolHandle *handle_ptr = new MemoryPoolHandle(std::move(handle));
     *pool_handle = handle_ptr;
     return S_OK;
 }
@@ -86,7 +86,7 @@ SEAL_C_FUNC MemoryManager_GetPool2(void **pool_handle)
     IfNullRet(pool_handle, E_POINTER);
 
     MemoryPoolHandle handle = MemoryManager::GetPool();
-    MemoryPoolHandle *handle_ptr = new MemoryPoolHandle(move(handle));
+    MemoryPoolHandle *handle_ptr = new MemoryPoolHandle(std::move(handle));
     *pool_handle = handle_ptr;
     return S_OK;
 }
@@ -102,7 +102,7 @@ SEAL_C_FUNC MemoryManager_SwitchProfile(void *new_profile)
     MMProf *new_mm_profile = nullptr;
     IfFailRet(CreateProfileCopy(profile, &new_mm_profile));
 
-    MemoryManager::SwitchProfile(move(static_cast<MMProf *>(new_mm_profile)));
+    MemoryManager::SwitchProfile(std::move(static_cast<MMProf *>(new_mm_profile)));
     return S_OK;
 }
 
