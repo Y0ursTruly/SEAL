@@ -6,39 +6,11 @@ steps:
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
 
-- task: PowerShell@2
-  displayName: Install CMake 3.31.8
-  inputs:
-    targetType: 'inline'
-    script: |
-      # Download specific version of CMake
-      $ToolsDirectory = Join-Path -Path $Env:BUILD_SOURCESDIRECTORY -ChildPath tools
-      $CMakeZipFile = Join-Path $ToolsDirectory -ChildPath cmake.zip
-
-      Invoke-WebRequest -Uri "https://cmake.org/files/v3.31/cmake-3.31.8-windows-x86_64.zip" -OutFile $CMakeZipFile
-      New-Item -Path $ToolsDirectory -Name "cmake" -ItemType "directory"
-      Expand-Archive -Path $CMakeZipFile -DestinationPath $ToolsDirectory/cmake
-      Copy-Item -Path $ToolsDirectory/cmake/cmake-3.31.8-windows-x86_64/* -Destination "c:/Program Files/CMake" -Recurse -Force
-
 - task: CMake@1
   displayName: Verify CMake version
   inputs:
     workingDirectory: '$(Build.SourcesDirectory)'
     cmakeArgs: '--version'
-
-# - task: PowerShell@2
-#   displayName: Download Ninja
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       # Download Ninja
-#       $ToolsDirectory = Join-Path -Path $Env:BUILD_SOURCESDIRECTORY -ChildPath tools
-#       $NinjaZipFile = Join-Path $ToolsDirectory -ChildPath ninja.zip
-#       $NinjaExeFile = Join-Path $ToolsDirectory -ChildPath ninja.exe
-
-#       Invoke-WebRequest -Uri "https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip" -OutFile $NinjaZipFile
-#       Expand-Archive -Path $NinjaZipFile -DestinationPath $ToolsDirectory
-#       Copy-Item -Path $NinjaExeFile -Destination "c:/Program Files/CMake/bin"
 
 - task: Gradle@4
   displayName: Compile Android Native Libraries
