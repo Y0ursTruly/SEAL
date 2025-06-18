@@ -55,7 +55,9 @@ steps:
       cd $BUILD_SOURCESDIRECTORY
       xcodebuild -project build-arm64/SEAL.xcodeproj -sdk iphoneos -arch arm64 -configuration ${{ parameters.configuration }} clean build
       mkdir -p $BUILD_SOURCESDIRECTORY/lib/ios-arm64
-      cp build-arm64/lib/${{ parameters.configuration }}/libseal*.a $BUILD_SOURCESDIRECTORY/lib/ios-arm64
+      echo Copying arm64 libraries from build-arm64/lib/${{ parameters.configuration }}/
+      cp build-arm64/lib/${{ parameters.configuration }}/libseal-4.2.a $BUILD_SOURCESDIRECTORY/lib/ios-arm64/libseal.a
+      cp build-arm64/lib/${{ parameters.configuration }}/libsealc-4.2.a $BUILD_SOURCESDIRECTORY/lib/ios-arm64/libsealc.a
   displayName: 'Build SEAL for iOS (arm64)'
 
 - task: CopyFiles@2
