@@ -17,6 +17,11 @@ macro(seal_make_memfn_option id docstring)
     unset(_SEAL_FOUND_FN_NAME)
 endmacro()
 
+# Check for SecureZeroMemory
+check_symbol_exists(SecureZeroMemory "Windows.h" SEAL_SECURE_ZERO_MEMORY_FOUND)
+seal_make_memfn_option(SECURE_ZERO_MEMORY "Use SecureZeroMemory")
+message(STATUS "Using SecureZeroMemory: ${SEAL_USE_SECURE_ZERO_MEMORY}")
+
 # Check for memset_s
 check_cxx_source_runs("
     #define __STDC_WANT_LIB_EXT1__ 1
@@ -29,14 +34,14 @@ check_cxx_source_runs("
     }"
     SEAL_MEMSET_S_FOUND)
 seal_make_memfn_option(MEMSET_S "Use memset_s")
-message(STATUS "SEAL_USE_MEMSET_S: ${SEAL_USE_MEMSET_S}")
+message(STATUS "Using memset_s: ${SEAL_USE_MEMSET_S}")
 
 # Check for explicit_bzero
 check_symbol_exists(explicit_bzero "string.h" SEAL_EXPLICIT_BZERO_FOUND)
 seal_make_memfn_option(EXPLICIT_BZERO "Use explicit_bzero")
-message(STATUS "SEAL_USE_EXPLICIT_BZERO: ${SEAL_USE_EXPLICIT_BZERO}")
+message(STATUS "Using explicit_bzero: ${SEAL_USE_EXPLICIT_BZERO}")
 
 # Check for explicit_memset
 check_symbol_exists(explicit_memset "string.h" SEAL_EXPLICIT_MEMSET_FOUND)
 seal_make_memfn_option(EXPLICIT_MEMSET "Use explicit_memset")
-message(STATUS "SEAL_USE_EXPLICIT_MEMSET: ${SEAL_USE_EXPLICIT_MEMSET}")
+message(STATUS "Using explicit_memset: ${SEAL_USE_EXPLICIT_MEMSET}")

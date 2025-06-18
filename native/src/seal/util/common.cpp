@@ -8,7 +8,7 @@
 #include "seal/util/common.h"
 #include <string.h>
 
-#if (SEAL_SYSTEM == SEAL_SYSTEM_WINDOWS)
+#ifdef SEAL_USE_SECURE_ZERO_MEMORY
 #include <Windows.h>
 #endif
 
@@ -20,7 +20,7 @@ namespace seal
     {
         void seal_memzero(void *data, size_t size)
         {
-#if (SEAL_SYSTEM == SEAL_SYSTEM_WINDOWS)
+#ifdef SEAL_USE_SECURE_ZERO_MEMORY
             SecureZeroMemory(data, size);
 #elif defined(SEAL_USE_MEMSET_S)
             if (size > 0U && memset_s(data, static_cast<rsize_t>(size), 0, static_cast<rsize_t>(size)) != 0)

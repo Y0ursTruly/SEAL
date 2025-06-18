@@ -40,6 +40,7 @@
 #cmakedefine SEAL_USE___BUILTIN_SUBCLL
 
 // Zero memory functions
+#cmakedefine SEAL_USE_SECURE_ZERO_MEMORY
 #cmakedefine SEAL_USE_EXPLICIT_BZERO
 #cmakedefine SEAL_USE_EXPLICIT_MEMSET
 #cmakedefine SEAL_USE_MEMSET_S
