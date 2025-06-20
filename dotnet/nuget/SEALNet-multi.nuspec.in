@@ -16,6 +16,10 @@
     <tags>c# crypto cryptography homomorphic encryption</tags>
     <license type="file">LICENSE</license>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <dependencies>
+      <group targetFramework="net8.0" />
+      <group targetFramework="net8.0-ios11.0" />
+    </dependencies>
   </metadata>
   <files>
     <file src="SEALNet.targets" target="buildTransitive/Microsoft.Research.SEALNet.targets" />
