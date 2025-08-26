@@ -21,18 +21,29 @@
     <ProjectReference Include="$(ProjectDir)../src/SEALNet.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <!-- The library directory is set by CMake for Debug and Release configurations -->
+  <PropertyGroup Condition="$([MSBuild]::IsOsPlatform(Windows))">
+    <SealcOutDir Condition="'$(Configuration)'=='Release'">@CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
+    <SealcOutDir Condition="'$(Configuration)'=='Debug'">@CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG@</SealcOutDir>
+    <SealcOutDir Condition="'$(SealcOutDir)'==''">@CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
+    <SealcPattern>sealc.dll</SealcPattern>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOsPlatform(Linux))">
     <SealcOutDir Condition="'$(Configuration)'=='Release'">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
     <SealcOutDir Condition="'$(Configuration)'=='Debug'">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG@</SealcOutDir>
     <SealcOutDir Condition="'$(SealcOutDir)'==''">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
-  
-    <!-- The filename pattern depends on the OS -->
-    <SealcPattern Condition="$([MSBuild]::IsOsPlatform(Windows))">sealc.dll</SealcPattern>
-    <SealcPattern Condition="$([MSBuild]::IsOsPlatform(Linux))">libsealc.so*</SealcPattern>
-    <SealcPattern Condition="$([MSBuild]::IsOsPlatform(OSX))">libsealc*.dylib</SealcPattern>
-  
-    <!-- Portable separator for subdirectories -->
+    <SealcPattern>libsealc.so*</SealcPattern>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOsPlatform(OSX))">
+    <SealcOutDir Condition="'$(Configuration)'=='Release'">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
+    <SealcOutDir Condition="'$(Configuration)'=='Debug'">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG@</SealcOutDir>
+    <SealcOutDir Condition="'$(SealcOutDir)'==''">@CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE@</SealcOutDir>
+    <SealcPattern>libsealc*.dylib</SealcPattern>
+  </PropertyGroup>
+
+  <!-- Portable separator for subdirectories -->
+  <PropertyGroup>
     <DS>$([System.IO.Path]::DirectorySeparatorChar)</DS>
   </PropertyGroup>
 

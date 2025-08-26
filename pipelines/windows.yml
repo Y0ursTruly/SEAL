@@ -142,7 +142,7 @@ steps:
   #   displayName: 'ESRP Add Strong Name to iOS assembly'
   #   inputs:
   #     ConnectedServiceName: 'ESRP CodeSigning'
-  #     FolderPath: build/bin/dotnet/${{ parameters.configuration }}/net8.0-ios
+  #     FolderPath: build/bin/dotnet/${{ parameters.configuration }}/net8.0-ios11.0
   #     Pattern: '*.dll'
   #     signConfigType: inlineSignParams
   #     inlineOperation: |
@@ -198,7 +198,7 @@ steps:
   #   displayName: 'ESRP CodeSigning for .NET for iOS assembly'
   #   inputs:
   #     ConnectedServiceName: 'ESRP CodeSigning'
-  #     FolderPath: build/bin/dotnet/${{ parameters.configuration }}/net8.0-ios
+  #     FolderPath: build/bin/dotnet/${{ parameters.configuration }}/net8.0-ios11.0
   #     Pattern: '*.dll'
   #     signConfigType: inlineSignParams
   #     inlineOperation: |

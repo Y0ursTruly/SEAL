@@ -34,8 +34,8 @@
     <file src="$NUGET_IOS_ARM64_SEAL_PATH$" target="runtimes/ios-arm64/native/" />
     <file src="../../build/bin/dotnet/$Configuration$/net8.0/SEALNet.dll" target="lib/net8.0/" />
     <file src="../../build/bin/dotnet/$Configuration$/net8.0/SEALNet.xml" target="lib/net8.0/" />
-    <file src="../../build/bin/dotnet/$Configuration$/net8.0-ios/SEALNet.dll" target="lib/net8.0-ios11.0/" />
-    <file src="../../build/bin/dotnet/$Configuration$/net8.0-ios/SEALNet.xml" target="lib/net8.0-ios11.0/" />
+    <file src="../../build/bin/dotnet/$Configuration$/net8.0-ios11.0/SEALNet.dll" target="lib/net8.0-ios11.0/" />
+    <file src="../../build/bin/dotnet/$Configuration$/net8.0-ios11.0/SEALNet.xml" target="lib/net8.0-ios11.0/" />
     <file src="../../LICENSE" target="LICENSE" />
     <file src="../../NOTICE" target="/ThirdPartyNotices" />
   </files>
