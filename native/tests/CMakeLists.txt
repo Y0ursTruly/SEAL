@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.25)
 
 project(SEALTest VERSION 4.2.0 LANGUAGES CXX C)
 
@@ -39,7 +39,6 @@ endif()
 if(SEAL_BUILD_TESTS)
     if(SEAL_BUILD_DEPS)
         seal_fetch_thirdparty_content(ExternalGTest)
-        add_library(GTest::gtest ALIAS gtest)
     else()
         find_package(GTest 1 CONFIG)
         if(NOT GTest_FOUND)

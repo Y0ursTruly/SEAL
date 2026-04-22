@@ -45,12 +45,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SignAssembly Condition="'$(OS)' == 'Windows_NT' And '$(SEALNetSigningCertificate)' != ''">true</SignAssembly>
-    <AssemblyOriginatorKeyFile Condition="'$(OS)' == 'Windows_NT' And '$(SEALNetSigningCertificate)' != ''">SEALNetCert.snk</AssemblyOriginatorKeyFile>
-    <DelaySign Condition="'$(OS)' == 'Windows_NT' And '$(SEALNetSigningCertificate)' != ''">true</DelaySign>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 

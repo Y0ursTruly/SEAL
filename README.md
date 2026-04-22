@@ -36,9 +36,8 @@ Users of previous versions of the library should look at the [list of changes](C
     - [Examples, Tests, and Benchmarks](#examples-tests-and-benchmarks)
   - [Building .NET Components](#building-net-components)
     - [Windows, Linux, and macOS](#windows-linux-and-macos)
-    - [Android and iOS](#android-and-ios)
-    - [Using Microsoft SEAL for .NET](#using-microsoft-seal-for-net)
-    - [Building Your Own NuGet Package](#building-your-own-nuget-package)
+    - [Building Your Own NuGet Package for Windows, Linux, and macOS](#building-your-own-nuget-package-for-windows-linux-and-macos)
+    - [Building Your Own NuGet Package for Android and iOS](#building-your-own-nuget-package-for-android-and-ios)
 - [Contributing](#contributing)
 - [Citing Microsoft SEAL](#citing-microsoft-seal)
 - [Acknowledgments](#acknowledgments)
@@ -107,7 +106,7 @@ Finally, one can build Microsoft SEAL manually with a multiplatform CMake build 
 Microsoft SEAL has no required dependencies, but certain optional features can be enabled when compiling with support for specific third-party libraries.
 
 When [building manually](#building-microsoft-seal-manually), one can choose to have the Microsoft SEAL build system download and build the dependencies, or alternatively search the system directories for pre-installed dependencies.
-On the other extreme, the downloadable [NuGet package](https://www.nuget.org/packages/Microsoft.Research.SEALNet) cannot be configured at all, but it is always possible to [build a custom NuGet package](#building-your-own-nuget-package).
+On the other extreme, the downloadable [NuGet package](https://www.nuget.org/packages/Microsoft.Research.SEALNet) cannot be configured at all, but it is always possible to [build a custom NuGet package](#building-your-own-nuget-package-for-windows-linux-and-macos).
 Other package managers offer varying amounts of opportunities for configuring the dependencies and [other build options](#basic-cmake-options).
 
 The optional dependencies and their tested versions (other versions may work as well) are as follows:
@@ -123,7 +122,8 @@ The optional dependencies and their tested versions (other versions may work as 
 
 #### Intel HEXL
 
-Intel HEXL is a library providing efficient implementations of cryptographic primitives common in homomorphic encryption. The acceleration is particularly evident on Intel processors with the Intel AVX512-IFMA52 instruction set.
+Intel HEXL is a library providing efficient implementations of cryptographic primitives common in homomorphic encryption.
+The acceleration is particularly evident on Intel processors with the Intel AVX512-IFMA52 instruction set.
 
 #### Microsoft GSL
 
@@ -150,18 +150,17 @@ If both ZLIB and Zstandard support are enabled, Zstandard is used by default due
 In most common applications of Microsoft SEAL the size of a `SecretKey` would not be deliberately revealed to untrusted parties.
 If this is a concern, one can always save the `SecretKey` in an uncompressed form.
 
-<!-- ### Installing with VCPKG (Windows, Unix-like) -->
-<!-- To install Microsoft SEAL with all dependencies enabled, run `./vcpkg install seal` or `./vcpkg install seal:x64-windows-static` on Windows. -->
-<!-- To install Microsoft SEAL with partial dependencies enabled, for example, only `ms-gsl`, run `./vcpkg install seal[core,ms-gsl]` or `./vcpkg install seal[core,ms-gsl]:x64-windows-static` on Windows. -->
-
-<!-- ### Installing with Homebrew (macOS) -->
-
 ### Installing from NuGet Package (Windows, Linux, macOS, Android, iOS)
 
-For .NET developers the easiest way of installing Microsoft SEAL is by using the multiplatform NuGet package available at [NuGet.org](https://www.nuget.org/packages/Microsoft.Research.SEALNet).
-Simply add this package into your .NET project as a dependency and you are ready to go.
+> **Notice**: **No further releases of Microsoft SEAL will be published to NuGet.org.**
+> The [existing package](https://www.nuget.org/packages/Microsoft.Research.SEALNet) will remain available but will not be updated to match newer versions of Microsoft SEAL.
+> To use a newer version in a .NET project, build your own NuGet package from source.
+> This is straightforward following the instructions in [Building Your Own NuGet Package for Windows, Linux, and macOS](#building-your-own-nuget-package-for-windows-linux-and-macos) and [Building Your Own NuGet Package for Android and iOS](#building-your-own-nuget-package-for-android-and-ios).
 
-To develop mobile applications using Microsoft SEAL and .NET for Android and iOS, just add this package to your [Xamarin](https://dotnet.microsoft.com/apps/xamarin) project. Unlike the Microsoft SEAL C++ library, the .NET wrapper library works only on 64-bit platforms, so only `arm64-v8a`/`x86_64` Android ABIs and `arm64`/`x86_64` iOS architectures are supported.
+For .NET developers wanting to use a previously-published release, the multiplatform NuGet package is available at [NuGet.org](https://www.nuget.org/packages/Microsoft.Research.SEALNet).
+Simply add this package into your .NET project and you are ready to go.
+To use Microsoft SEAL in mobile C# applications, just add the NuGet package to your [MAUI project](https://dotnet.microsoft.com/en-us/apps/maui).
+Unlike the Microsoft SEAL C++ library, the .NET wrapper library works only on 64-bit platforms, so only `arm64-v8a`/`x86_64` Android ABIs and `arm64`/`x86_64` iOS architectures are supported.
 
 ### Installing from vcpkg
 
@@ -219,10 +218,10 @@ A global install requires elevated (root or administrator) privileges.
 | System | Toolchain |
 |---|---|
 | Windows | Visual Studio 2022 with C++ CMake Tools for Windows |
-| Linux | Clang++ (>= 5.0) or GNU G++ (>= 6.0), CMake (>= 3.13) |
-| macOS/iOS | Xcode toolchain (>= 9.3), CMake (>= 3.13) |
+| Linux | Clang++ (>= 5.0) or GNU G++ (>= 6.0), CMake (>= 3.25) |
+| macOS/iOS | Xcode toolchain (>= 9.3), CMake (>= 3.25) |
 | Android | Android Studio |
-| FreeBSD | CMake (>= 3.13) |
+| FreeBSD | CMake (>= 3.25) |
 
 **Note:** Microsoft SEAL compiled with Clang++ has much better runtime performance than one compiled with GNU G++.
 
@@ -264,14 +263,19 @@ sudo cmake --install build
 
 On Windows the same scripts above work in a developer command prompt for Visual Studio using either the Ninja or "Visual Studio 17 2022" generators.
 
-When using the Ninja generator, please use the appropriate command prompt depending on the platform you want to build for. If you want to build for x64, please use the **x64 Native Tools Command Prompt for Visual Studio 2022** command prompt to configure and build the library. If you want to build for x86, please use the **x86 Native Tools Command Prompt for Visual Studio 2022** command prompt to configure and build the library. To build using Ninja, type
+When using the Ninja generator, please use the appropriate command prompt depending on the platform you want to build for.
+If you want to build for x64, please use the **x64 Native Tools Command Prompt for Visual Studio 2022** command prompt to configure and build the library.
+If you want to build for x86, please use the **x86 Native Tools Command Prompt for Visual Studio 2022** command prompt to configure and build the library.
+To build using Ninja, type
 
 ```PowerShell
 cmake -S . -B build -G Ninja
 cmake --build build
 ```
 
-When using the "Visual Studio 17 2022" generator you can use the **Developer Command Prompt for VS 2022** command prompt to configure and build the library. By default the generated platform will be x64. You can specify the desired platform using the architecture flag `-A <x64|Win32>` and the desired configuration using `--config <Debug|Release>`.
+When using the "Visual Studio 17 2022" generator you can use the **Developer Command Prompt for VS 2022** command prompt to configure and build the library.
+By default the generated platform will be x64.
+You can specify the desired platform using the architecture flag `-A <x64|Win32>` and the desired configuration using `--config <Debug|Release>`.
 
 ```PowerShell
 # Generate and build for x64 in Release mode
@@ -285,9 +289,14 @@ cmake -S . -B build -G "Visual Studio 17 2022" -A Win32
 cmake --build build --config Release
 ```
 
-Installing the library in Windows works as well. Instead of using the `sudo` command, however, you need to run `cmake --install build` from a command prompt with Administrator permissions. Files will be installed by default to `C:\Program Files (x86)\SEAL\`.
+Installing the library in Windows works as well.
+Instead of using the `sudo` command, however, you need to run `cmake --install build` from a command prompt with Administrator permissions.
+Files will be installed by default to `C:\Program Files (x86)\SEAL\`.
 
-Visual Studio 2022 provides support for CMake-based projects. You can select the menu option `File / Open / Folder...` and navigate to the folder where the Microsoft SEAL repository is located. After opening the folder, Visual Studio will detect that this is a CMake-based project and will enable the menu command `Project / CMake settings for SEAL`. This will open the CMake settings editor that provides a user interface where you can create different configurations and set different CMake options.
+Visual Studio 2022 provides support for CMake-based projects.
+You can select the menu option `File / Open / Folder...` and navigate to the folder where the Microsoft SEAL repository is located.
+After opening the folder, Visual Studio will detect that this is a CMake-based project and will enable the menu command `Project / CMake settings for SEAL`.
+This will open the CMake settings editor that provides a user interface where you can create different configurations and set different CMake options.
 
 After the build completes, the output static library `seal-<version>.lib` can be found in `build\lib\` or `build\lib\Release\`.
 When linking with applications, using CMake as is explained in [Linking with Microsoft SEAL through CMake](#linking-with-microsoft-seal-through-cmake) is highly recommended.
@@ -298,29 +307,75 @@ Alternatively, you need to add `native\src\` (full path) and `build\native\src\`
 Microsoft SEAL can be compiled for Android and iOS.
 Under the [android/](android/) directory of the source tree you will find an [Android Studio](https://developer.android.com/studio) project that you can use to compile the library for Android.
 
-To build the library for iOS, use the following scripts:
+The easiest way to build XCFrameworks for iOS is with the provided CMake script:
 
-```PowerShell
-# Configure CMake
-cmake -S . -B build -GXcode -DSEAL_BUILD_SEAL_C=ON -DSEAL_BUILD_STATIC_SEAL_C=ON -DCMAKE_SYSTEM_NAME=iOS "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64" -C cmake/functions.ios.cmake
+```bash
+# Release build, XCFrameworks written to the project root (default):
+cmake -P cmake/ios_xcframework.cmake
 
-# Build libseal*.a for x86_64
-xcodebuild -project build/SEAL.xcodeproj -sdk iphonesimulator -arch x86_64 -configuration Release clean build
-mkdir -p build/lib/x86_64
-cp build/lib/Release/libseal*.a build/lib/x86_64
-
-# Build libseal*.a for arm64
-xcodebuild -project SEAL.xcodeproj -sdk iphoneos -arch arm64 -configuration Release clean build
-mkdir -p build/lib/arm64
-cp build/lib/Release/libseal*.a build/lib/arm64
-
-# Combine libseal-*.a into libseal.a and libsealc-*.a into libsealc.a
-lipo -create -output build/lib/libseal.a build/lib/x86_64/libseal-*.a arm64/libseal-*.a
-lipo -create -output build/lib/libsealc.a build/lib/x86_64/libsealc-*.a build/lib/arm64/libsealc-*.a
+# Debug build, custom output directory:
+cmake -DBUILD_TYPE=Debug -DOUTPUT_DIR=./out -P cmake/ios_xcframework.cmake
 ```
 
-The native libraries generated through these methods are meant to be called only through the .NET library described in the following sections.
-Specifically, they do not contain any wrappers that can be used from Java (for Android) or Objective C (for iOS).
+This configures and builds for both device (`iphoneos`) and simulator (`iphonesimulator`), installs both, and creates `libseal-4.2.xcframework` and `libsealc-4.2.xcframework`.
+Both slices target `arm64`.
+Intermediate build files are placed in `out/ios-xcframework/` by default; override with `-DWORK_DIR=<path>`.
+
+Once you have the XCFrameworks, include them in your Xcode project as framework dependencies and call the C library functions from Swift or Objective C ([see here](https://developer.apple.com/documentation/swift/using-imported-c-functions-in-swift)).
+
+<details>
+<summary>Manual build steps (without the script)</summary>
+
+```bash
+D=out/ios-xcframework  # working directory
+
+# Configure for device (iphoneos) and simulator (iphonesimulator), both arm64.
+cmake -S . -B $D/build-device -GXcode   \
+    -DSEAL_BUILD_SEAL_C=ON              \
+    -DSEAL_BUILD_STATIC_SEAL_C=ON       \
+    -DCMAKE_SYSTEM_NAME=iOS             \
+    -DCMAKE_OSX_SYSROOT=iphoneos        \
+    -DCMAKE_OSX_ARCHITECTURES=arm64     \
+    -C cmake/functions.ios.cmake
+cmake -S . -B $D/build-simulator -GXcode \
+    -DSEAL_BUILD_SEAL_C=ON               \
+    -DSEAL_BUILD_STATIC_SEAL_C=ON        \
+    -DCMAKE_SYSTEM_NAME=iOS              \
+    -DCMAKE_OSX_SYSROOT=iphonesimulator  \
+    -DCMAKE_OSX_ARCHITECTURES=arm64      \
+    -C cmake/functions.ios.cmake
+
+# Build and install each.
+cmake --build   $D/build-device    --config Release
+cmake --build   $D/build-simulator --config Release
+cmake --install $D/build-device    --config Release --prefix $D/install-device
+cmake --install $D/build-simulator --config Release --prefix $D/install-simulator
+
+# Stage headers per slice. XCFramework requires separate header trees because
+# generated files (e.g. config.h) can differ between device and simulator.
+mkdir -p $D/staging/device $D/staging/simulator
+rsync -a $D/install-device/include/SEAL-4.2/    $D/staging/device/
+rsync -a $D/install-simulator/include/SEAL-4.2/ $D/staging/simulator/
+
+# xcodebuild refuses to overwrite an existing .xcframework output.
+rm -rf libseal-4.2.xcframework libsealc-4.2.xcframework
+
+# Create the XCFrameworks.
+xcodebuild -create-xcframework                          \
+    -library $D/install-device/lib/libseal-4.2.a        \
+    -headers $D/staging/device                          \
+    -library $D/install-simulator/lib/libseal-4.2.a     \
+    -headers $D/staging/simulator                       \
+    -output  libseal-4.2.xcframework
+xcodebuild -create-xcframework                          \
+    -library $D/install-device/lib/libsealc-4.2.a       \
+    -headers $D/staging/device                          \
+    -library $D/install-simulator/lib/libsealc-4.2.a    \
+    -headers $D/staging/simulator                       \
+    -output  libsealc-4.2.xcframework
+```
+
+</details>
 
 #### Building for WebAssembly
 
@@ -447,7 +502,7 @@ If Microsoft SEAL was installed using a package manager like vcpkg or Homebrew, 
 
 #### Examples, Tests, and Benchmarks
 
-When building Microsoft SEAL, examples, tests, and benchmarks can be built by setting `SEAL_BUILD_EXAMPLES=ON`, `SEAL_BUILD_TESTS=ON`, and `SEAL_BUILD_BENCH=ON`; see [Basic CMake Options](basic-cmake-options).
+When building Microsoft SEAL, examples, tests, and benchmarks can be built by setting `SEAL_BUILD_EXAMPLES=ON`, `SEAL_BUILD_TESTS=ON`, and `SEAL_BUILD_BENCH=ON`; see [Basic CMake Options](#basic-cmake-options).
 Alternatively, [examples](native/examples/CMakeLists.txt), [tests](native/tests/CMakeLists.txt), and [benchmark](native/bench/CMakeLists.txt) can be built as standalone CMake projects linked with Microsoft SEAL (installed in `~/mylibs`), by following the commands below.
 Omit setting `SEAL_ROOT` if the library is installed globally.
 
@@ -475,7 +530,7 @@ The SEAL_C library is meant to be used only by the .NET library, not by end-user
 
 #### Windows, Linux, and macOS
 
-For compiling .NET code you will need to install a [.NET SDK (>= 6.0)](https://dotnet.microsoft.com/download).
+For compiling .NET code you will need to install a [.NET SDK (>= 8.0)](https://dotnet.microsoft.com/download).
 Building the SEAL_C library with CMake will generate project files for the .NET wrapper library, examples, and unit tests.
 The SEAL_C library must be discoverable when running a .NET application, e.g., be present in the same directory as your executable, which is taken care of by the .NET examples and tests project files.
 Run the following scripts to build each project:
@@ -491,21 +546,17 @@ You can use `--verbosity detailed` to print the list of unit tests that are bein
 
 On Windows, you can also use the Microsoft Visual Studio 2022 solution file, for example, `out/build/x64-Debug/dotnet/SEALNet.sln` to build all three projects.
 
-#### Android and iOS
-
-While it is possible to build your own custom NuGet package for Android or iOS (see [Building for Android and iOS](#building-for-android-and-ios) for the native component), this is not easy and is not recommended. Instead, please add a reference to the multiplatform [NuGet package](https://www.nuget.org/packages/Microsoft.Research.SEALNet) to your [Xamarin](https://dotnet.microsoft.com/apps/xamarin) project.
-
-#### Using Microsoft SEAL for .NET
-
-To use Microsoft SEAL for .NET in your own application you need to:
-
-1. Add a reference in your project to `SEALNet.dll`;
-1. Ensure the native shared library is available for your application when run.
-The easiest way to ensure this is to copy the native shared library to the same directory where your application's executable is located.
-
-#### Building Your Own NuGet Package
+#### Building Your Own NuGet Package for Windows, Linux, and macOS
 
 You can build your own NuGet package for Microsoft SEAL by following the instructions in [NUGET.md](dotnet/nuget/NUGET.md).
+
+#### Building Your Own NuGet Package for Android and iOS
+
+Android and iOS .NET developers can use the standard multiplatform [NuGet package](https://www.nuget.org/packages/Microsoft.Research.SEALNet), but if this is for some reason not appropriate, it is possible to build your own custom NuGet package.
+First, see [Building for Android and iOS](#building-for-android-and-ios) for building the native components.
+You can then use the multiplatform nuspec file that is prepared by CMake from [this template](dotnet/nuget/SEALNet-multi.nuspec.in).
+After configuring, the actual nuspec file will be located, e.g., in `build/dotnet/nuget/SEALNet-multi.nuspec`.
+See our [packaging pipeline](pipelines/nuget.yml) for an example of how to build the NuGet package.
 
 ## Contributing
 

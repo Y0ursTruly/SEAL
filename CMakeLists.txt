@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.25)
 
 # Allow using old style FetchContent_Populate pattern.
 if(POLICY CMP0169)
@@ -602,7 +602,7 @@ if(UNIX OR APPLE)
             set(SEAL_PKGCONFIG_MSGSL_REQUIRES_STRING "seal_msgsl >= ${Microsoft.GSL_VERSION_MAJOR}")
         endif()
         if(SEAL_USE_ZLIB)
-            set(SEAL_PKGCONFIG_ZLIB_REQUIRES_STRING "zlib = ${ZLIB_VERSION_STRING}")
+            set(SEAL_PKGCONFIG_ZLIB_REQUIRES_STRING "zlib >= ${ZLIB_VERSION_STRING}")
         endif()
         if(SEAL_USE_ZSTD)
             set(SEAL_PKGCONFIG_ZSTD_REQUIRES_STRING "libzstd >= ${zstd_VERSION_MAJOR}")

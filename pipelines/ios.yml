@@ -1,19 +1,5 @@
 steps:
 - task: CMake@1
-  displayName: 'Configure SEAL for x64'
-  inputs:
-    workingDirectory: '$(Build.SourcesDirectory)'
-    cmakeArgs: >
-      -S .
-      -B build-x64
-      -GXcode
-      -DSEAL_BUILD_SEAL_C=ON
-      -DSEAL_BUILD_STATIC_SEAL_C=ON
-      -DCMAKE_SYSTEM_NAME=iOS
-      "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
-      -C cmake/functions.ios-x64.cmake
-
-- task: CMake@1
   displayName: 'Configure SEAL for arm64'
   inputs:
     workingDirectory: '$(Build.SourcesDirectory)'
@@ -24,34 +10,24 @@ steps:
       -DSEAL_BUILD_SEAL_C=ON
       -DSEAL_BUILD_STATIC_SEAL_C=ON
       -DCMAKE_SYSTEM_NAME=iOS
-      "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
-      -C cmake/functions.ios-arm64.cmake
+      -DCMAKE_OSX_ARCHITECTURES=arm64
+      -C cmake/functions.ios.cmake
 
 - script: |
       cd $BUILD_SOURCESDIRECTORY
-      xcodebuild -project build-x64/SEAL.xcodeproj -sdk iphonesimulator -arch x86_64 -configuration ${{ parameters.configuration }} clean build
-      mkdir -p $BUILD_SOURCESDIRECTORY/lib/iossimulator-x64
-      echo Copying x86_64 libraries from build-x64/lib/${{ parameters.configuration }}/
-      cp build-x64/lib/${{ parameters.configuration }}/libseal*.a $BUILD_SOURCESDIRECTORY/lib/iossimulator-x64
-
       xcodebuild -project build-arm64/SEAL.xcodeproj -sdk iphonesimulator -arch arm64 -configuration ${{ parameters.configuration }} clean build
-      mkdir -p $BUILD_SOURCESDIRECTORY/lib/iossimulator-arm64
+      mkdir -p $BUILD_SOURCESDIRECTORY/lib/iossimulator
+
       echo Copying arm64 libraries from build-arm64/lib/${{ parameters.configuration }}/
-      cp build-arm64/lib/${{ parameters.configuration }}/libseal*.a $BUILD_SOURCESDIRECTORY/lib/iossimulator-arm64
-
-      cd lib
-      mkdir -p iossimulator
-
-      echo Creating fat libraries for Simulator
-      lipo -create -output iossimulator/libseal.a iossimulator-x64/libseal-*.a iossimulator-arm64/libseal-*.a
-      lipo -create -output iossimulator/libsealc.a iossimulator-x64/libsealc-*.a iossimulator-arm64/libsealc-*.a
+      cp build-arm64/lib/${{ parameters.configuration }}/libseal-*.a $BUILD_SOURCESDIRECTORY/lib/iossimulator/libseal.a
+      cp build-arm64/lib/${{ parameters.configuration }}/libsealc-*.a $BUILD_SOURCESDIRECTORY/lib/iossimulator/libsealc.a
 
       echo Architectures for iossimulator/libseal.a
-      lipo -info iossimulator/libseal.a
+      lipo -info $BUILD_SOURCESDIRECTORY/lib/iossimulator/libseal.a
 
       echo Architectures for iossimulator/libsealc.a
-      lipo -info iossimulator/libsealc.a
-  displayName: 'Build SEAL for Simulator (x64 and arm64)'
+      lipo -info $BUILD_SOURCESDIRECTORY/lib/iossimulator/libsealc.a
+  displayName: 'Build SEAL for Simulator (arm64)'
 
 - script: |
       cd $BUILD_SOURCESDIRECTORY
@@ -82,3 +58,15 @@ steps:
   inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: ${{ parameters.artifactName }}
+
+- script: |
+      cd $BUILD_SOURCESDIRECTORY
+      mkdir -p $BUILD_SOURCESDIRECTORY/xcframework-out
+      cmake -DBUILD_TYPE=${{ parameters.configuration }} -DOUTPUT_DIR=$BUILD_SOURCESDIRECTORY/xcframework-out -P cmake/ios_xcframework.cmake
+  displayName: 'Build iOS XCFrameworks'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: ios-xcframework-drop'
+  inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/xcframework-out'
+      artifactName: ios-xcframework-drop
