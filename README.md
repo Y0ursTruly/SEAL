@@ -1,5 +1,7 @@
 # Microsoft SEAL
 
+**RUN `./build.sh` then select option `1` in the display provided**
+
 Microsoft SEAL is an easy-to-use open-source ([MIT licensed](LICENSE)) homomorphic encryption library developed by the Cryptography Research Group at Microsoft.
 Microsoft SEAL is written in modern standard C++ and is easy to compile and run in many different environments.
 For more information about the Microsoft SEAL project, see [sealcrypto.org](https://www.microsoft.com/en-us/research/project/microsoft-seal).
